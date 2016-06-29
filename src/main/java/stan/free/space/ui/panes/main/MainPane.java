@@ -17,6 +17,10 @@ public class MainPane
 
     //FIELDS
     private GraphicsContext gc;
+	private int h = 7;
+	private int w = 9;
+	private int hei = 96;
+	private int wid = 96;
 
     public MainPane()
     {
@@ -26,9 +30,13 @@ public class MainPane
     }
     private void initViews()
     {
-        Canvas canvas = new Canvas(666, 666);
+        //Canvas canvas = new Canvas(w*wid/2+h*wid/2, h*hei+(Math.abs(h-w)*hei/2));
+        Canvas canvas = new Canvas(w*wid/2+h*wid/2, (h+w)*hei/4 + hei/2);
         gc = canvas.getGraphicsContext2D();
-        drawTiles(gc);
+		gc.setFill(Color.GREEN);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        //drawTiles(gc);
+        drawTiles(h*wid/2);
         this.getChildren().add(canvas);
     }
 
@@ -83,20 +91,54 @@ public class MainPane
         Image image = new Image("res/images/test_tile.png");
         gc.drawImage(image, x, y);
     }
-
-    private void drawTiles(GraphicsContext gc)
+    private void drawTile(String tileName, int x, int y)
     {
-        int h = 4;
-        int w = 5;
-        int hei = 48;
-        int wid = 96;
-        for(int i=0; i<h; i++)
+        Image image = new Image(tileName);
+        gc.drawImage(image, x, y);
+    }
+
+    private void drawTiles(int centerX)
+    {
+        for(int i=0; i<h/2; i++)
         {
             int y = i;
             int offset = i*wid/2;
             for(int j=0; j<w; j++)
             {
-                drawImage(gc, (j-1)*wid/2-offset, y*hei/2);
+                drawTile("res/images/tile_floor.png", (j-1)*wid/2-offset+centerX, y*hei/4);
+                y++;
+            }
+        }
+        for(int i=h/2; i<h; i++)
+        {
+            int y = i;
+            int offset = i*wid/2;
+            for(int j=0; j<w; j++)
+            {
+                drawTile("res/images/tile_wall.png", (j-1)*wid/2-offset+centerX, y*hei/4);
+                y++;
+            }
+        }
+	}
+    private void drawTiles(GraphicsContext gc)
+    {
+        for(int i=0; i<h/2; i++)
+        {
+            int y = i;
+            int offset = i*wid/2;
+            for(int j=0; j<w; j++)
+            {
+                drawTile("res/images/tile_floor.png", (j-1)*wid/2-offset, y*hei/2);
+                y++;
+            }
+        }
+        for(int i=h/2; i<h; i++)
+        {
+            int y = i;
+            int offset = i*wid/2;
+            for(int j=0; j<w; j++)
+            {
+                drawTile("res/images/tile_wall.png", (j-1)*wid/2-offset, y*hei/2);
                 y++;
             }
         }

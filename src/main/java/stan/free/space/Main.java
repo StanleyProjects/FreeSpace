@@ -18,7 +18,7 @@ public class Main
     @Override
     public void start(Stage primaryStage)
     {
-        primaryStage.setScene(new Scene(new MainPane(), 480, 480, Color.TRANSPARENT));
+        primaryStage.setScene(new Scene(new MainPane(), 640, 640, Color.TRANSPARENT));
         primaryStage.show();
     }
 }
