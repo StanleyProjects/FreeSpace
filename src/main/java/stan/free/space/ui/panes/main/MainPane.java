@@ -1,5 +1,8 @@
 package stan.free.space.ui.panes.main;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -9,138 +12,80 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.layout.VBox;
 
 import stan.free.space.core.Location;
+import stan.free.space.helpers.FileHelper;
+import stan.free.space.helpers.json.JSONParser;
 
 public class MainPane
     extends VBox
 {
     //VIEWS
+    private Canvas canvas;
 
     //FIELDS
-    private GraphicsContext gc;
-	private int h = 7;
-	private int w = 9;
-	private int hei = 96;
-	private int wid = 96;
+    private GraphicsContext graphicsContext;
+	private int hConst = 34;
+	private int hei = 132;
+	private int wid = 132;
 
     public MainPane()
     {
         super();
         this.getStylesheets().add("css/theme.css");
         initViews();
+        test();
     }
     private void initViews()
     {
-        //Canvas canvas = new Canvas(w*wid/2+h*wid/2, h*hei+(Math.abs(h-w)*hei/2));
-        Canvas canvas = new Canvas(w*wid/2+h*wid/2, (h+w)*hei/4 + hei/2);
-        gc = canvas.getGraphicsContext2D();
-		gc.setFill(Color.GREEN);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        //drawTiles(gc);
-        drawTiles(h*wid/2);
+    	canvas = new Canvas();
+        graphicsContext = canvas.getGraphicsContext2D();
         this.getChildren().add(canvas);
     }
 
-    private void drawShapes(GraphicsContext gc)
+    private void test()
     {
-        gc.setFill(Color.GREEN);
-        gc.setStroke(Color.BLUE);
-        gc.setLineWidth(5);
-        gc.strokeLine(40, 10, 10, 40);
-        gc.fillOval(10, 60, 30, 30);
-        gc.strokeOval(60, 60, 30, 30);
-        gc.fillRoundRect(110, 60, 30, 30, 10, 10);
-        gc.strokeRoundRect(160, 60, 30, 30, 10, 10);
-        gc.fillArc(10, 110, 30, 30, 45, 240, ArcType.OPEN);
-        gc.fillArc(60, 110, 30, 30, 45, 240, ArcType.CHORD);
-        gc.fillArc(110, 110, 30, 30, 45, 240, ArcType.ROUND);
-        gc.strokeArc(10, 160, 30, 30, 45, 240, ArcType.OPEN);
-        gc.strokeArc(60, 160, 30, 30, 45, 240, ArcType.CHORD);
-        gc.strokeArc(110, 160, 30, 30, 45, 240, ArcType.ROUND);
-        gc.fillPolygon(new double[] {10, 40, 10, 40},
-                       new double[] {210, 210, 240, 240}, 4);
-        gc.strokePolygon(new double[] {60, 90, 60, 90},
-                         new double[] {210, 210, 240, 240}, 4);
-        gc.strokePolyline(new double[] {110, 140, 110, 140},
-                          new double[] {210, 210, 240, 240}, 4);
-    }
-
-    private void drawMatrix(GraphicsContext gc)
-    {
-        int h = 15;
-        int w = 10;
-        int hei = 10;
-        int wid = 20;
-        for(int i=0; i<h; i++)
+    	String json = FileHelper.readFile("E:/Downloads/testlocation.lct");
+    	HashMap location = null;
+        JSONParser parser = new JSONParser();
+        try
         {
-            int y = i;
-            for(int j=0; j<w; j++)
-            {
-                //gc.strokeOval(i*15, j*15, 10, 10);
-                int offset = i*wid/2;
-                //gc.strokeLine(j*wid/2-offset, y*hei/2, (j+1)*wid/2-offset, (y+1)*hei/2);
-                //gc.strokeLine((j+1)*wid/2-offset, (y+1)*hei/2, j*wid/2-offset, (y+2)*hei/2);
-                gc.fillPolygon(new double[] {j*wid/2-offset, (j+1)*wid/2-offset, j*wid/2-offset, (j-1)*wid/2-offset},
-                               new double[] {y*hei/2, (y+1)*hei/2, (y+2)*hei/2, (y+1)*hei/2}, 2);
-                y++;
-            }
+            location = (HashMap)parser.parse(json);
+        }
+        catch(Exception e)
+        {
+            System.out.println("JSONParser - " + e.getMessage());
+        }
+        if(location != null)
+        {
+        	initCanvasFromLocation(location);
         }
     }
-
-    private void drawImage(GraphicsContext gc, int x, int y)
+    private void initCanvasFromLocation(HashMap location)
     {
-        Image image = new Image("res/images/test_tile.png");
-        gc.drawImage(image, x, y);
+    	HashMap rect = (HashMap)location.get("rect");
+        int h = ((Long)rect.get("h")).intValue();
+        int w = ((Long)rect.get("w")).intValue();
+    	canvas.setWidth(w*wid/2+h*wid/2+124);
+    	canvas.setHeight((h+w)*hei/4 + hei/2+124);
+		graphicsContext.setFill(Color.GREEN);
+        graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawTiles(graphicsContext, (ArrayList)location.get("tiles"), h*wid/2, wid);
     }
-    private void drawTile(String tileName, int x, int y)
+    private void drawTiles(GraphicsContext gc, ArrayList tiles, int centerX, int offsetY)
+    {
+    	for(int i=0; i<tiles.size(); i++)
+    	{
+    		HashMap tile = (HashMap)tiles.get(i);
+	        int x = ((Long)tile.get("x")).intValue();
+	        int y = ((Long)tile.get("y")).intValue();
+	        int offset = y*wid/2;
+            drawTile(gc, "res/images/"+(String)tile.get("image")+".png", x*wid/2-offset+centerX, (y+x)*hei/4 + offsetY);
+    	}
+	}
+
+    private void drawTile(GraphicsContext gc, String tileName, int x, int y)
     {
         Image image = new Image(tileName);
-        gc.drawImage(image, x, y);
-    }
-
-    private void drawTiles(int centerX)
-    {
-        for(int i=0; i<h/2; i++)
-        {
-            int y = i;
-            int offset = i*wid/2;
-            for(int j=0; j<w; j++)
-            {
-                drawTile("res/images/tile_floor.png", (j-1)*wid/2-offset+centerX, y*hei/4);
-                y++;
-            }
-        }
-        for(int i=h/2; i<h; i++)
-        {
-            int y = i;
-            int offset = i*wid/2;
-            for(int j=0; j<w; j++)
-            {
-                drawTile("res/images/tile_wall.png", (j-1)*wid/2-offset+centerX, y*hei/4);
-                y++;
-            }
-        }
-	}
-    private void drawTiles(GraphicsContext gc)
-    {
-        for(int i=0; i<h/2; i++)
-        {
-            int y = i;
-            int offset = i*wid/2;
-            for(int j=0; j<w; j++)
-            {
-                drawTile("res/images/tile_floor.png", (j-1)*wid/2-offset, y*hei/2);
-                y++;
-            }
-        }
-        for(int i=h/2; i<h; i++)
-        {
-            int y = i;
-            int offset = i*wid/2;
-            for(int j=0; j<w; j++)
-            {
-                drawTile("res/images/tile_wall.png", (j-1)*wid/2-offset, y*hei/2);
-                y++;
-            }
-        }
+        double htemp = image.getHeight();
+        gc.drawImage(image, x, y-htemp+hConst);
     }
 }
