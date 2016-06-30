@@ -11,9 +11,9 @@ import javafx.scene.shape.ArcType;
 
 import javafx.scene.layout.VBox;
 
+import stan.free.space.core.FSCore;
 import stan.free.space.core.Location;
-import stan.free.space.helpers.FileHelper;
-import stan.free.space.helpers.json.JSONParser;
+import stan.free.space.core.LocationGenerator;
 
 public class MainPane
     extends VBox
@@ -23,7 +23,6 @@ public class MainPane
 
     //FIELDS
     private GraphicsContext graphicsContext;
-	private int hConst = 34;
 	private int hei = 132;
 	private int wid = 132;
 
@@ -32,6 +31,7 @@ public class MainPane
         super();
         this.getStylesheets().add("css/theme.css");
         initViews();
+		//LocationGenerator.generate();
         test();
     }
     private void initViews()
@@ -43,17 +43,7 @@ public class MainPane
 
     private void test()
     {
-    	String json = FileHelper.readFile("E:/Downloads/testlocation.lct");
-    	HashMap location = null;
-        JSONParser parser = new JSONParser();
-        try
-        {
-            location = (HashMap)parser.parse(json);
-        }
-        catch(Exception e)
-        {
-            System.out.println("JSONParser - " + e.getMessage());
-        }
+		HashMap location = FSCore.getInstance().getLocation("testloc");
         if(location != null)
         {
         	initCanvasFromLocation(location);
@@ -65,7 +55,7 @@ public class MainPane
         int h = ((Long)rect.get("h")).intValue();
         int w = ((Long)rect.get("w")).intValue();
     	canvas.setWidth(w*wid/2+h*wid/2+124);
-    	canvas.setHeight((h+w)*hei/4 + hei/2+124);
+    	canvas.setHeight((h+w)*hei/4 + hei);
 		graphicsContext.setFill(Color.GREEN);
         graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawTiles(graphicsContext, (ArrayList)location.get("tiles"), h*wid/2, wid);
@@ -75,17 +65,26 @@ public class MainPane
     	for(int i=0; i<tiles.size(); i++)
     	{
     		HashMap tile = (HashMap)tiles.get(i);
-	        int x = ((Long)tile.get("x")).intValue();
-	        int y = ((Long)tile.get("y")).intValue();
+	        long type = (Long)tile.get("type");
+			if(type == -1)
+			{
+				continue;
+			}
+			HashMap coordinates = (HashMap)tile.get("coordinates");
+			int x = ((Long)coordinates.get("x")).intValue();
+			int y = ((Long)coordinates.get("y")).intValue();
 	        int offset = y*wid/2;
-            drawTile(gc, "res/images/"+(String)tile.get("image")+".png", x*wid/2-offset+centerX, (y+x)*hei/4 + offsetY);
+			ArrayList levels = (ArrayList)tile.get("levels");
+    		ArrayList levelTiles = (ArrayList)levels.get(0);
+    		HashMap levelTile = (HashMap)levelTiles.get(0);
+			String image = (String)levelTile.get("image");
+            drawTile(gc, FSCore.getInstance().getImagePath(image), x*wid/2-offset+centerX, (y+x)*hei/4 + offsetY);
     	}
 	}
 
     private void drawTile(GraphicsContext gc, String tileName, int x, int y)
     {
-        Image image = new Image(tileName);
-        double htemp = image.getHeight();
-        gc.drawImage(image, x, y-htemp+hConst);
+        Image image = new Image("file:"+tileName);
+        gc.drawImage(image, x, y-image.getHeight());
     }
 }
