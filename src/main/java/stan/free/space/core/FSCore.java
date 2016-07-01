@@ -4,10 +4,12 @@ import java.util.HashMap;
 
 import stan.free.space.helpers.FileHelper;
 import stan.free.space.helpers.json.JSONParser;
+import stan.free.space.helpers.json.JSONWriter;
 
 public class FSCore
 {
-	static public String systemPath = "C:/Program Files/StanleyProjects/FreeSpace";
+    //static public String systemPath = "C:/Program Files/StanleyProjects/FreeSpace";
+    static public String systemPath = "E:/StanleyProjects/FreeSpace";
 	
     static private FSCore instance;
     static public FSCore getInstance()
@@ -27,6 +29,28 @@ public class FSCore
 	{
         return FSCore.systemPath + "/images/" + name;
 	}
+    public void saveLocation(HashMap location)
+    {
+        String data = null;
+        try
+        {
+            data = JSONWriter.mapToJSONString(location);
+        }
+        catch(Exception e)
+        {
+            System.out.println("mapToJSONString - " + e.getMessage());
+            return;
+        }
+        try
+        {
+            FileHelper.writeFile(data, FSCore.systemPath + "/locations/" + location.get("name") + ".lct");
+        }
+        catch(Exception e)
+        {
+            System.out.println("writeFile - " + e.getMessage());
+            return;
+        }
+    }
 	public HashMap getLocation(String name)
 	{
 		String result = FileHelper.readFile(FSCore.systemPath + "/locations/" + name + ".lct");
@@ -62,7 +86,7 @@ public class FSCore
 		rect.put("w", 1L);
 		rect.put("h", 1L);
 		emptyTile.put("rect", rect);
-		emptyTile.put("type", -1);
+		emptyTile.put("type", -1L);
 		return emptyTile;
 	}
 }

@@ -79,6 +79,7 @@ public class FileHelper
         }
         catch(Exception e)
         {
+            System.out.println("FileHelper writeFile error - "+e.getMessage());
         }
         finally
         {
