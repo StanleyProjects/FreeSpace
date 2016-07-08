@@ -26,7 +26,8 @@ public class MainPane
         super();
         this.getStylesheets().add("css/theme.css");
         initViews();
-        spaceCanvas.initCanvasFromLocation(LocationGenerator.generateCorridor());
+        //spaceCanvas.initCanvasFromLocation(LocationGenerator.generateCorridor());
+        spaceCanvas.initCanvasFromLocation(LocationGenerator.generateDistrict());
 		//LocationGenerator.generateCorridor();
         //test();
     }

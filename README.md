@@ -1,6 +1,10 @@
 # FreeSpace
 FreeSpace game on JavaFX
 
+    applicationId "stan.free.space"
+    versionCode 1607081826
+    versionName "0.03"
+
 # Windows build information
 ## build Java8
 > "%JAVA_HOME%/bin/javac" -sourcepath ./src/main/java -d bin -classpath lib/* ./src/main/java/stan/free/space/Main.java

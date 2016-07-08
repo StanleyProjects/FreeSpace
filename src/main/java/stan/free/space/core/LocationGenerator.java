@@ -7,19 +7,19 @@ import java.util.Random;
 
 public class LocationGenerator
 {
-	static public HashMap generateCorridor()
+	static public HashMap generateDistrict()
 	{
-		String name = "corridor";
+		String name = "district";
 		int beginX = 0;
 		int beginY = 0;
-		HashMap location = new HashMap<String, Object>();
-		HashMap begin = new HashMap<String, Object>();
+		HashMap location = new HashMap<>();
+		HashMap begin = new HashMap<>();
 		begin.put("x", beginX);
 		begin.put("y", beginY);
 		location.put("begin", begin);
-		ArrayList allTiles = new ArrayList<Object>();
+		ArrayList allTiles = new ArrayList<>();
 		//
-		ArrayList floorTiles = generateFloorTiles(beginX, beginY, 2);
+		ArrayList floorTiles = generateDistrictFloorTiles(beginX, beginY);
 		correctingTilesCoordinates(floorTiles);
 		allTiles.addAll(floorTiles);
 		//
@@ -28,14 +28,93 @@ public class LocationGenerator
 		location.put("name", name);
 		return location;
 	}
-	static private ArrayList generateFloorTiles(int x, int y, int direction)
+	static private ArrayList generateDistrictFloorTiles(int x, int y)
 	{
-		ArrayList floorTiles = new ArrayList<Object>();
+		ArrayList floorTiles = new ArrayList<>();
 		HashMap floorTile = FSCore.getInstance().getTile("floor_ground_center");
 		Random random = new Random();
 		int beginX = x;
 		int beginY = y;
-		floorTiles.addAll(addTiles(beginX, beginY, direction, random.nextInt(5)+1, floorTile));
+		floorTiles.addAll(addAreaTiles(beginX, beginY, random.nextInt(5)+1, floorTile));
+		while(true)
+		{
+			int lenght = random.nextInt(5)+1;
+			lenght *= random.nextInt(1)+1;
+			int oX = random.nextInt(10)-5;
+			int oY = random.nextInt(10)-5;
+			oX *= random.nextInt(1)+1;
+			oY *= random.nextInt(1)+1;
+			if(oX == 0 && 
+				(random.nextBoolean() || random.nextBoolean()))
+			{
+				oX = random.nextInt(10)-5;
+				oX *= random.nextInt(1)+1;
+			}
+			if(oX == 0)
+			{
+				break;
+			}
+			floorTiles.addAll(addAreaTiles(beginX + oX, beginY + oY, lenght, floorTile));
+			beginX = (beginX+oX)/2;
+			beginY = (beginY+oY)/2;
+		}
+		return floorTiles;
+	}
+	static private ArrayList addAreaTiles(long x, long y, int lenght, HashMap tile)
+	{
+		long offsetX = 0;
+		long offsetY = 0;
+		HashMap copyTile = new HashMap<String, Object>();
+    	HashMap rect = (HashMap)tile.get("rect");
+        int h = ((Long)rect.get("h")).intValue();
+        int w = ((Long)rect.get("w")).intValue();
+		ArrayList tiles = new ArrayList<Object>();
+		for(int i=0; i<lenght; i++)
+		{
+			offsetX = 0;
+			for(int j=0; j<lenght; j++)
+			{
+				HashMap coordinates = new HashMap<String, Object>();
+				coordinates.put("x", x + offsetX);
+				coordinates.put("y", y + offsetY);
+				tile.put("coordinates", coordinates);
+				tiles.add(shallowCopy(tile));
+				offsetX += w;
+			}
+			offsetY += h;
+		}
+		return tiles;
+	}
+	
+	static public HashMap generateCorridor()
+	{
+		String name = "corridor";
+		int beginX = 0;
+		int beginY = 0;
+		HashMap location = new HashMap<>();
+		HashMap begin = new HashMap<>();
+		begin.put("x", beginX);
+		begin.put("y", beginY);
+		location.put("begin", begin);
+		ArrayList allTiles = new ArrayList<>();
+		//
+		ArrayList floorTiles = generateCorridorFloorTiles(beginX, beginY, 2);
+		correctingTilesCoordinates(floorTiles);
+		allTiles.addAll(floorTiles);
+		//
+		location.put("rect", getRectTiles(allTiles));
+		location.put("tiles", allTiles);
+		location.put("name", name);
+		return location;
+	}
+	static private ArrayList generateCorridorFloorTiles(int x, int y, int direction)
+	{
+		ArrayList floorTiles = new ArrayList<>();
+		HashMap floorTile = FSCore.getInstance().getTile("floor_ground_center");
+		Random random = new Random();
+		int beginX = x;
+		int beginY = y;
+		floorTiles.addAll(addLineTiles(beginX, beginY, direction, random.nextInt(5)+1, floorTile));
 		while(true)
 		{
 			int lenght = random.nextInt(5)+1;
@@ -45,7 +124,7 @@ public class LocationGenerator
 				break;
 			}
 			dir /= 25;
-			floorTiles.addAll(addTiles(beginX, beginY, dir, lenght, floorTile));
+			floorTiles.addAll(addLineTiles(beginX, beginY, dir, lenght, floorTile));
 			if(dir == 1)
 			{
 				beginY -= lenght;
@@ -131,7 +210,7 @@ public class LocationGenerator
 		System.out.println(rect);
 		return rect;
 	}
-	static private ArrayList addTiles(long x, long y, int direction, int lenght, HashMap tile)
+	static private ArrayList addLineTiles(long x, long y, int direction, int lenght, HashMap tile)
 	{
 		long offsetX = 0;
 		long offsetY = 0;
