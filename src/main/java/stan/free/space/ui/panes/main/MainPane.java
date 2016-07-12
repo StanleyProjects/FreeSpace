@@ -9,7 +9,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 import stan.free.space.core.FSCore;
-import stan.free.space.core.LocationGenerator;
+import stan.free.space.core.generators.DistrictLocationGenerator;
+import stan.free.space.core.generators.LocationGenerator;
 
 import stan.free.space.ui.controls.canvases.SpaceCanvas;
 
@@ -26,8 +27,9 @@ public class MainPane
         super();
         this.getStylesheets().add("css/theme.css");
         initViews();
-        //spaceCanvas.initCanvasFromLocation(LocationGenerator.generateCorridor());
-        spaceCanvas.initCanvasFromLocation(LocationGenerator.generateDistrict());
+        //spaceCanvas.initCanvasFromLocation(new CorridorLocationGenerator().generate());
+        //spaceCanvas.initCanvasFromLocation(new DistrictLocationGenerator().generate());
+        spaceCanvas.initCanvasFromLocation(LocationGenerator.getDistrict().generate());
 		//LocationGenerator.generateCorridor();
         //test();
     }

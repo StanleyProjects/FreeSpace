@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import stan.free.space.core.FSCore;
-import stan.free.space.core.LocationGenerator;
+import stan.free.space.core.generators.LocationGenerator;
 
 public class SpaceCanvas
     extends Canvas
