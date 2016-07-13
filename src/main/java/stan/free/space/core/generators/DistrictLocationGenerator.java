@@ -42,8 +42,8 @@ public class DistrictLocationGenerator
 		while(true)
 		{
 			int lenght = 1;
-			int oX = 14;
-			int oY = -0;
+			int oX = 8;
+			int oY = 3;
 			if(random.nextBoolean() && random.nextBoolean())
 			{
 				break;
@@ -66,27 +66,22 @@ public class DistrictLocationGenerator
 		int beginY = y;
 		int oldX = x;
 		int oldY = y;
-		floorTiles.addAll(addAreaTiles(beginX, beginY, 1, floorTile));
-		//floorTiles.addAll(addAreaTiles(beginX, beginY, random.nextInt(5)+1, floorTile));
+		floorTiles.addAll(addAreaTiles(beginX, beginY, random.nextInt(5)+1, floorTile));
 		while(true)
 		{
-			int lenght = 1;
-			//int lenght = random.nextInt(5)+1;
-			//lenght *= random.nextInt(1)+1;
-			//int oX = random.nextInt(10)-5;
-			//int oY = random.nextInt(10)-5;
-			int oX = random.nextInt(10)+10;
-			int oY = random.nextInt(5);
+			int lenght = random.nextInt(5)+1;
+			lenght *= random.nextInt(1)+1;
+			int oX = random.nextInt(10)-5;
+			int oY = random.nextInt(10)-5;
 			oX *= random.nextInt(1)+1;
 			oY *= random.nextInt(1)+1;
-			if(oX == 10 && 
+			if(oX == 0 && 
 				(random.nextBoolean() || random.nextBoolean()))
 			{
-				//oX = random.nextInt(10)-5;
-				oX = random.nextInt(10)+10;
+				oX = random.nextInt(10)-5;
 				oX *= random.nextInt(1)+1;
 			}
-			if(oX == 10)
+			if(oX == 0)
 			{
 				break;
 			}
