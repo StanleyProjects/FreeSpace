@@ -39,8 +39,8 @@ public abstract class MainGenerator
 		{
 			HashMap tmp = (HashMap)tiles.get(i);
 			HashMap coordinates = (HashMap)tmp.get("coordinates");
-			long tmpX = (Long)coordinates.get("x");
-			long tmpY = (Long)coordinates.get("y");
+			int tmpX = ((Number)coordinates.get("x")).intValue();
+			int tmpY = ((Number)coordinates.get("y")).intValue();
 			coordinates.put("x", tmpX + offsetX);
 			coordinates.put("y", tmpY + offsetY);
 			//((HashMap)tiles.get(i)).put("coordinates", coordinates);

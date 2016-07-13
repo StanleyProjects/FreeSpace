@@ -34,13 +34,15 @@ public class SpaceCanvas
         int w = ((Long)rect.get("w")).intValue();
         tiles = LocationGenerator.createTilesList(w, h, (ArrayList)location.get("tiles"));
         int correctH = LocationGenerator.correctH(w, h, tiles);
-        int correctW = LocationGenerator.correctW(w, h, tiles);
+        //int correctW = LocationGenerator.correctW(w, h, tiles);
+        int correctW = 0;
         //this.setWidth(w*wid/2+h*wid/2+124);
         //this.setHeight((h+w)*hei/4 + hei);
         this.setWidth((w-correctW)*wid/2+(h-correctH)*wid/2 + wid);
         this.setHeight((h+w)*hei/4 + hei);
-		getGraphicsContext2D().setFill(Color.GREEN);
+		getGraphicsContext2D().setFill(Color.BLACK);
         getGraphicsContext2D().fillRect(0, 0, this.getWidth(), this.getHeight());
+		getGraphicsContext2D().setFill(Color.WHITE);
         drawTiles((h-correctH)*wid/2, wid);
     }
     private void drawTiles(int centerX, int offsetY)
@@ -54,14 +56,15 @@ public class SpaceCanvas
 				continue;
 			}
 			HashMap coordinates = (HashMap)tile.get("coordinates");
-			int x = ((Long)coordinates.get("x")).intValue();
-			int y = ((Long)coordinates.get("y")).intValue();
+			int x = ((Number)coordinates.get("x")).intValue();
+			int y = ((Number)coordinates.get("y")).intValue();
 	        int offset = y*wid/2;
 			ArrayList levels = (ArrayList)tile.get("levels");
     		ArrayList levelTiles = (ArrayList)levels.get(0);
     		HashMap levelTile = (HashMap)levelTiles.get(0);
 			String image = (String)levelTile.get("image");
             drawTile(FSCore.getInstance().getImagePath(image), x*wid/2-offset+centerX, (y+x)*hei/4 + offsetY);
+			getGraphicsContext2D().fillText(x + " " + y, x*wid/2-offset+centerX, (y+x)*hei/4 + offsetY);
             //drawTileAsync(FSCore.getInstance().getImagePath(image), x+y*200, x*wid/2-offset+centerX, (y+x)*hei/4 + offsetY);
     	}
 	}
