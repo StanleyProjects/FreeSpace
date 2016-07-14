@@ -29,7 +29,7 @@ public class DistrictLocationGenerator
 		//
 		return packLocation(allTiles, name);
 	}
-	private ArrayList generateDistrictFloorTiles(int x, int y)
+	private ArrayList generateDistrictFloorTilesTest(int x, int y)
 	{
 		ArrayList floorTiles = new ArrayList<>();
 		HashMap floorTile = FSCore.getInstance().getTile("floor_ground_center");
@@ -42,8 +42,8 @@ public class DistrictLocationGenerator
 		while(true)
 		{
 			int lenght = 1;
-			int oX = 8;
-			int oY = 3;
+			int oX = 7;
+			int oY = 8;
 			if(random.nextBoolean() && random.nextBoolean())
 			{
 				break;
@@ -57,7 +57,7 @@ public class DistrictLocationGenerator
 		}
 		return floorTiles;
 	}
-	private ArrayList generateDistrictFloorTilesOld(int x, int y)
+	private ArrayList generateDistrictFloorTiles(int x, int y)
 	{
 		ArrayList floorTiles = new ArrayList<>();
 		HashMap floorTile = FSCore.getInstance().getTile("floor_ground_center");
@@ -66,15 +66,17 @@ public class DistrictLocationGenerator
 		int beginY = y;
 		int oldX = x;
 		int oldY = y;
-		floorTiles.addAll(addAreaTiles(beginX, beginY, random.nextInt(5)+1, floorTile));
+		floorTiles.addAll(addAreaTiles(beginX, beginY, 1, floorTile));
+		//floorTiles.addAll(addAreaTiles(beginX, beginY, random.nextInt(5)+1, floorTile));
 		while(true)
 		{
-			int lenght = random.nextInt(5)+1;
-			lenght *= random.nextInt(1)+1;
+			//int lenght = random.nextInt(5)+1;
+			//lenght *= random.nextInt(1)+1;
+			int lenght = 1;
 			int oX = random.nextInt(10)-5;
 			int oY = random.nextInt(10)-5;
-			oX *= random.nextInt(1)+1;
-			oY *= random.nextInt(1)+1;
+			oX *= random.nextInt(2)+1;
+			oY *= random.nextInt(2)+1;
 			if(oX == 0 && 
 				(random.nextBoolean() || random.nextBoolean()))
 			{
@@ -91,8 +93,8 @@ public class DistrictLocationGenerator
 			floorTiles.addAll(addBridgeTiles(oldX, oldY, beginX, beginY, floorTiles));
 			oldX = beginX;
 			oldY = beginY;
-			beginX/=2;
-			beginY/=2;
+			//beginX/=2;
+			//beginY/=2;
 		}
 		return floorTiles;
 	}
@@ -147,15 +149,42 @@ public class DistrictLocationGenerator
 			}
 			tiles.addAll(addBridges(side, beginX, beginY, rX, rY, dX, dY, bridgeTile, allTiles));
 			tiles.addAll(addBridges(side, endX, endY, rX, rY, -dX, -dY, bridgeTile, allTiles));
-				HashMap coordinates = new HashMap<>();
-				coordinates.put("x", beginX + rX/2);
-				if(rY % 2 == 0) {
-					coordinates.put("y", beginY + (rY/2)*dY);
-				} else {
-					coordinates.put("y", beginY + (rY/2+1)*dY);
-				}
-				bridgeTile.put("coordinates", coordinates);
-				tiles.add(shallowCopy(bridgeTile));
+			HashMap coordinates = new HashMap<>();
+			coordinates.put("x", beginX + rX/2);
+			if(rY % 2 == 0) {
+				coordinates.put("y", beginY + (rY/2)*dY);
+			} else {
+				coordinates.put("y", beginY + (rY/2+1)*dY);
+			}
+			bridgeTile.put("coordinates", coordinates);
+			tiles.add(shallowCopy(bridgeTile));
+		}
+		else
+		{
+			int dX = 1;
+			int dY = 1;
+			boolean side = false;
+			if(beginX<endX)
+			{
+				dX = 1;
+				dY = 1;
+			}
+			else
+			{
+				dX = -1;
+				dY = 1;
+			}
+			tiles.addAll(addBridges(side, beginX, beginY, rX, rY, dX, dY, bridgeTile, allTiles));
+			tiles.addAll(addBridges(side, endX, endY, rX, rY, -dX, -dY, bridgeTile, allTiles));
+			HashMap coordinates = new HashMap<>();
+			coordinates.put("x", beginX + (rX/2)*dX);
+			if(rY % 2 == 0) {
+				coordinates.put("y", beginY + (rY/2)*dY);
+			} else {
+				coordinates.put("y", beginY + (rY/2+1)*dY);
+			}
+			bridgeTile.put("coordinates", coordinates);
+			tiles.add(shallowCopy(bridgeTile));
 		}
 		return tiles;
 	}
@@ -205,7 +234,7 @@ public class DistrictLocationGenerator
 		}
 		else
 		{
-			while(Math.abs(offsetY) < rY/2)
+			while(Math.abs(offsetY) < rY/2+1)
 			{
 				HashMap coordinates = new HashMap<>();
 				coordinates.put("x", beginX + offsetX);

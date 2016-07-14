@@ -2,8 +2,8 @@
 FreeSpace game on JavaFX
 
     applicationId "stan.free.space"
-    versionCode 1607132000
-    versionName "0.05"
+    versionCode 1607141900
+    versionName "0.06"
 
 # Windows build information
 ## build Java8
