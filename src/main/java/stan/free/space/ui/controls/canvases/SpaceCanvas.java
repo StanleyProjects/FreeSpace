@@ -30,10 +30,12 @@ public class SpaceCanvas
     public void initCanvasFromLocation(HashMap location)
     {
     	HashMap rect = (HashMap)location.get("rect");
-        int h = ((Long)rect.get("h")).intValue();
-        int w = ((Long)rect.get("w")).intValue();
+        System.out.println("SpaceCanvas rect " + rect);
+        int h = ((Number)rect.get("h")).intValue();
+        int w = ((Number)rect.get("w")).intValue();
         tiles = LocationGenerator.createTilesList(w, h, (ArrayList)location.get("tiles"));
-        int correctH = LocationGenerator.correctH(w, h, tiles);
+        //int correctH = LocationGenerator.correctH(w, h, tiles);
+        int correctH = 0;
         //int correctW = LocationGenerator.correctW(w, h, tiles);
         int correctW = 0;
         //this.setWidth(w*wid/2+h*wid/2+124);
@@ -43,6 +45,7 @@ public class SpaceCanvas
 		getGraphicsContext2D().setFill(Color.BLACK);
         getGraphicsContext2D().fillRect(0, 0, this.getWidth(), this.getHeight());
 		getGraphicsContext2D().setFill(Color.WHITE);
+        System.out.println("SpaceCanvas" + " drawTiles");
         drawTiles((h-correctH)*wid/2, wid);
     }
     private void drawTiles(int centerX, int offsetY)

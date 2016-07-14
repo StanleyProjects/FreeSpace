@@ -13,8 +13,8 @@ public abstract class MainGenerator
 		{
 			HashMap tmp = (HashMap)tiles.get(i);
 			HashMap coordinates = (HashMap)tmp.get("coordinates");
-			long tmpX = (Long)coordinates.get("x");
-			long tmpY = (Long)coordinates.get("y");
+			int tmpX = ((Number)coordinates.get("x")).intValue();
+			int tmpY = ((Number)coordinates.get("y")).intValue();
 			if(tmpX < 0 || tmpY < 0)
 			{
 				long offsetX = 0;
@@ -48,8 +48,42 @@ public abstract class MainGenerator
 	}
 	protected HashMap getRectTiles(ArrayList tiles)
 	{
-		long w = 0;
-		long h = 0;
+		int minX = 0;
+		int maxX = 0;
+		int minY = 0;
+		int maxY = 0;
+		HashMap rect = new HashMap<>();
+		for(int i=0; i<tiles.size(); i++)
+		{
+			HashMap tmp = (HashMap)tiles.get(i);
+			HashMap coordinates = (HashMap)tmp.get("coordinates");
+			int tmpX = ((Number)coordinates.get("x")).intValue();
+			int tmpY = ((Number)coordinates.get("y")).intValue();
+			if(tmpX>maxX)
+			{
+				maxX = tmpX;
+			}
+			else if(tmpX<minX)
+			{
+				minX = tmpX;
+			}
+			if(tmpY > maxY)
+			{
+				maxY = tmpY;
+			}
+			else if(tmpY < minY)
+			{
+				minY = tmpY;
+			}
+		}
+		rect.put("w", Math.abs(maxX-minX));
+		rect.put("h", Math.abs(maxY-minY));
+		return rect;
+	}
+	protected HashMap getRectTilesOld(ArrayList tiles)
+	{
+		int w = 0;
+		int h = 0;
 		HashMap rect = new HashMap<>();
 		for(int i=0; i<tiles.size(); i++)
 		{
@@ -59,18 +93,15 @@ public abstract class MainGenerator
 			int tmpY = ((Number)coordinates.get("y")).intValue();
 			if(tmpX+1 > w)
 			{
-				//System.out.println("tmpX - " + tmpX);
 				w = tmpX+1;
 			}
 			if(tmpY+1 > h)
 			{
-				//System.out.println("tmpY - " + tmpY);
 				h = tmpY+1;
 			}
 		}
 		rect.put("w", w);
 		rect.put("h", h);
-		System.out.println(rect);
 		return rect;
 	}
 	protected final Map shallowCopy(final Map source)

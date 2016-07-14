@@ -2,8 +2,8 @@
 FreeSpace game on JavaFX
 
     applicationId "stan.free.space"
-    versionCode 1607141900
-    versionName "0.06"
+    versionCode 1607150202
+    versionName "0.07"
 
 # Windows build information
 ## build Java8
@@ -13,4 +13,4 @@ FreeSpace game on JavaFX
 > "%JAVA_HOME%/bin/javapackager" -createbss -srcdir ./src/main/css -outdir bin/css -srcfiles theme.css -v
 
 ## run Java8
-> "%JAVA_HOME%/bin/java" -classpath lib/*;bin stan.free.space.Main
+> "%JAVA_HOME%/bin/java" -Dprism.order=sw -classpath lib/*;bin stan.free.space.Main
